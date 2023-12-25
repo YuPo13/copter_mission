@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -12,7 +12,7 @@ Full documentation is provided at http://python.dronekit.io/examples/simple_goto
 
 from __future__ import print_function
 import time
-from dronekit import connect, VehicleMode, LocationGlobalRelative
+from dronekit import connect, VehicleMode, LocationGlobalRelative, LocationGlobal
 
 
 # Set up option parsing to get connection string
@@ -35,7 +35,7 @@ if not connection_string:
 
 # Connect to the Vehicle
 print('Connecting to vehicle on: %s' % connection_string)
-vehicle = connect(connection_string, wait_ready=True)
+vehicle = connect('udp:127.0.0.1:14550', wait_ready=True)
 
 
 def arm_and_takeoff(aTargetAltitude):
@@ -51,7 +51,7 @@ def arm_and_takeoff(aTargetAltitude):
 
     print("Arming motors")
     # Copter should arm in GUIDED mode
-    vehicle.mode = VehicleMode("GUIDED")
+    vehicle.mode = VehicleMode("AltHold")
     vehicle.armed = True
 
     # Confirm vehicle armed before attempting to take off
@@ -68,37 +68,37 @@ def arm_and_takeoff(aTargetAltitude):
     while True:
         print(" Altitude: ", vehicle.location.global_relative_frame.alt)
         # Break and return from function just below target altitude.
-        if vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95:
+        if vehicle.location.global_relative_frame.alt >= aTargetAltitude :
             print("Reached target altitude")
             break
-        time.sleep(1)
+        time.sleep(60)
 
 
-arm_and_takeoff(10)
+arm_and_takeoff(50)
+time.sleep(60)
+print("Set default/target airspeed to 300")
+# vehicle.airspeed = 300
 
-print("Set default/target airspeed to 3")
-vehicle.airspeed = 3
-
-print("Going towards first point for 30 seconds ...")
-point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
-vehicle.simple_goto(point1)
+print("Going towards first point for 300 seconds ...")
+point1 = LocationGlobal(50.443326, 30.448078, 50)
+vehicle.simple_goto(point1, groundspeed=50)
 
 # sleep so we can see the change in map
-time.sleep(30)
+time.sleep(120)
 
 print("Going towards second point for 30 seconds (groundspeed set to 10 m/s) ...")
-point2 = LocationGlobalRelative(-35.363244, 149.168801, 20)
-vehicle.simple_goto(point2, groundspeed=10)
+point2 = LocationGlobal(50.450739, 30.461242, 50)
+vehicle.simple_goto(point2, groundspeed=50)
 
 # sleep so we can see the change in map
-time.sleep(30)
+time.sleep(120)
 
 print("Returning to Launch")
 vehicle.mode = VehicleMode("RTL")
 
 # Close vehicle object before exiting script
 print("Close vehicle object")
-vehicle.close()
+# vehicle.close()
 
 # Shut down simulator if it was started.
 if sitl:
