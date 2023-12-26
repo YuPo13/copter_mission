@@ -119,7 +119,7 @@ def arm_and_takeoff(a_target_altitude):
         time.sleep(1)
 
 
-arm_and_takeoff(10)
+arm_and_takeoff(100)
 time.sleep(1)
 
 
